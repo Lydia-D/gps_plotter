@@ -47,7 +47,7 @@ class Gps_Plotter_Setup
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' ); 
         $table_name = $wpdb->prefix . 'gps_locations';
         
-        $sql = "DROP TABLE IF EXISTS {$table_name};  
+        $sql = "IF NOT EXISTS{$table_name} (
           CREATE TABLE {$table_name} (
           gps_location_id int(10) unsigned NOT NULL AUTO_INCREMENT,
           last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -67,34 +67,12 @@ class Gps_Plotter_Setup
           UNIQUE KEY (gps_location_id),
           KEY session_id_index (session_id),
           KEY user_name_index (user_name)
-        ) $charset_collate;";
+        ) $charset_collate; )";
 
         dbDelta($sql);
         
         $location_row_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name};" );
         
-        if ( 0 == $location_row_count ) {
-            $sql = "INSERT INTO {$table_name} VALUES (1,'2007-01-03 11:37:00',47.627327,-122.325691,'wordpressUser3','3BA21D90-3F90-407F-BAAE-800B04B1F5EB','8BA21D90-3F90-407F-BAAE-800B04B1F5EB',0,0,0.0,'2007-01-03 11:37:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);
-            $sql = "INSERT INTO {$table_name} VALUES (2,'2007-01-03 11:38:00',47.607258, -122.330077,'wordpressUser3','3BA21D90-3F90-407F-BAAE-800B04B1F5EB','8BA21D90-3F90-407F-BAAE-800B04B1F5EB',0,0,0.0,'2007-01-03 11:38:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);            
-            $sql = "INSERT INTO {$table_name} VALUES (3,'2007-01-03 11:39:00',47.601703, -122.324670,'wordpressUser3','3BA21D90-3F90-407F-BAAE-800B04B1F5EB','8BA21D90-3F90-407F-BAAE-800B04B1F5EB',0,0,0.0,'2007-01-03 11:39:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);
-
-            $sql = "INSERT INTO {$table_name} VALUES (4,'2007-01-03 11:40:00',47.593757, -122.195074,'wordpressUser2','2BA21D90-3F90-407F-BAAE-800B04B1F5EC','8BA21D90-3F90-407F-BAAE-800B04B1F5EC',0,0,0.0,'2007-01-03 11:40:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);
-            $sql = "INSERT INTO {$table_name} VALUES (5,'2007-01-03 11:41:00',47.601397, -122.190353,'wordpressUser2','2BA21D90-3F90-407F-BAAE-800B04B1F5EC','8BA21D90-3F90-407F-BAAE-800B04B1F5EC',0,0,0.0,'2007-01-03 11:41:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);            
-            $sql = "INSERT INTO {$table_name} VALUES (6,'2007-01-03 11:42:00',47.610020, -122.190697,'wordpressUser2','2BA21D90-3F90-407F-BAAE-800B04B1F5EC','8BA21D90-3F90-407F-BAAE-800B04B1F5EC',0,0,0.0,'2007-01-03 11:42:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);
-            
-            $sql = "INSERT INTO {$table_name} VALUES (7,'2007-01-03 11:43:00',47.636631, -122.214558,'wordpressUser1','1BA21D90-3F90-407F-BAAE-800B04B1F5ED','8BA21D90-3F90-407F-BAAE-800B04B1F5ED',0,0,0.0,'2007-01-03 11:43:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);
-            $sql = "INSERT INTO {$table_name} VALUES (8,'2007-01-03 11:44:00',47.637961, -122.201769,'wordpressUser1','1BA21D90-3F90-407F-BAAE-800B04B1F5ED','8BA21D90-3F90-407F-BAAE-800B04B1F5ED',0,0,0.0,'2007-01-03 11:44:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);            
-            $sql = "INSERT INTO {$table_name} VALUES (9,'2007-01-03 11:45:00',47.642935, -122.209579,'wordpressUser1','1BA21D90-3F90-407F-BAAE-800B04B1F5ED','8BA21D90-3F90-407F-BAAE-800B04B1F5ED',0,0,0.0,'2007-01-03 11:45:00','na',137,'na','wordpress');"; 
-            $wpdb->query($sql);                                               
-        }
         
         $procedure_name =  $wpdb->prefix . "get_routes";
         $wpdb->query( "DROP PROCEDURE IF EXISTS {$procedure_name};" ); 
@@ -214,9 +192,6 @@ class Gps_Plotter_Setup
         // uncomment during development
        
         global $wpdb;
-        $table_name = $wpdb->prefix . 'gps_locations';
-        $sql = "DROP TABLE IF EXISTS {$table_name};";
-        $wpdb->query($sql);
     
         $table_name = $wpdb->prefix . 'gps_logger';
         $sql = "DROP TABLE IF EXISTS {$table_name};";

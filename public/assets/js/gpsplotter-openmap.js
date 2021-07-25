@@ -81,7 +81,7 @@ jQuery(document).ready(function($) {
   function getAllRoutesForMap() {
     // when the page first loads, get the routes from the DB and load them into the dropdown box.
 
-    viewingAllRoutes = true;
+    viewingAllRoutes = false;
     //selectRoute.selectedIndex = 0;
     showPermanentMessage("Please select a route below");
 
@@ -251,6 +251,7 @@ jQuery(document).ready(function($) {
         );
       }
 
+      var track = L.polyline(locationArray, {color: "red"}).addTo(gpsPlotterMap);
       // fit markers within window
       var bounds = new L.LatLngBounds(locationArray);
       gpsPlotterMap.fitBounds(bounds);
