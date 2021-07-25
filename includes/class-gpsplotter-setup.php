@@ -115,13 +115,13 @@ class Gps_Plotter_Setup
         $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
       
         $sql = "CREATE PROCEDURE {$procedure_name}(
-        _session_id VARCHAR(50))
+        _user_name VARCHAR(50))
         BEGIN
         SET @counter := 0;
         SELECT
-        CONCAT('{\"type\": \"Feature\", \"id\": \"', CAST(session_id AS CHAR), '\", \"properties\": {\"speed\": ', CAST(speed AS CHAR), ', \"direction\": ', CAST(direction AS CHAR), ', \"distance\": ', CAST(distance AS CHAR), ', \"location_method\": \"', CAST(location_method AS CHAR), '\", \"gps_time\": \"', DATE_FORMAT(gps_time, '%b %e %Y %h:%i%p'), '\", \"user_name\": \"', CAST(user_name AS CHAR), '\", \"phone_number\": \"', CAST(phone_number AS CHAR), '\", \"accuracy\": ', CAST(accuracy AS CHAR), ', \"geojson_counter\": ', @counter := @counter + 1, ', \"extra_info\": \"', CAST(extra_info AS CHAR), '\"}, \"geometry\": {\"type\": \"Point\", \"coordinates\": [', CAST(longitude AS CHAR), ', ', CAST(latitude AS CHAR), ']}}') geojson 
+        CONCAT('{\"type\": \"Feature\", \"id\": \"', CAST(user_name AS CHAR), '\", \"properties\": {\"speed\": ', CAST(speed AS CHAR), ', \"direction\": ', CAST(direction AS CHAR), ', \"distance\": ', CAST(distance AS CHAR), ', \"location_method\": \"', CAST(location_method AS CHAR), '\", \"gps_time\": \"', DATE_FORMAT(gps_time, '%b %e %Y %h:%i%p'), '\", \"user_name\": \"', CAST(user_name AS CHAR), '\", \"phone_number\": \"', CAST(phone_number AS CHAR), '\", \"accuracy\": ', CAST(accuracy AS CHAR), ', \"geojson_counter\": ', @counter := @counter + 1, ', \"extra_info\": \"', CAST(extra_info AS CHAR), '\"}, \"geometry\": {\"type\": \"Point\", \"coordinates\": [', CAST(longitude AS CHAR), ', ', CAST(latitude AS CHAR), ']}}') geojson 
         FROM {$table_name}
-        WHERE session_id = _session_id
+        WHERE user_name = _user_name
         ORDER BY last_update;
         END;";
 
@@ -151,10 +151,10 @@ class Gps_Plotter_Setup
         $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
 
         $sql = "CREATE PROCEDURE {$procedure_name}(
-        _session_id VARCHAR(50))
+        _user_name VARCHAR(50))
         BEGIN
         DELETE FROM {$table_name}
-        WHERE sessionID = _sessionID;
+        WHERE user_name = _user_name;
         END;";
         
         $wpdb->query( $sql ); 

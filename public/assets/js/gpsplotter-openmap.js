@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
   var intervalID = 0;
   var zoom = 12;
   var autoRefresh = false;
-  var sessionIDArray = [];
+  var UsernameArray = [];
   var viewingAllRoutes = false;
 
   var map_type = "ROADMAP";
@@ -127,17 +127,17 @@ jQuery(document).ready(function($) {
 
       // when a user taps on a marker, the position of the sessionID in this array is the position of the route
       // in the dropdown box. it's used below to set the index of the dropdown box when the map is changed
-      sessionIDArray = [];
+      UsernameArray = [];
 
       // iterate through the routes and load them into the dropdwon box.
       $(json.routes).each(function(key, value) {
         var option = document.createElement("option");
-        option.setAttribute("value", $(this).attr("session_id"));
+        option.setAttribute("value", $(this).attr("user_name"));
         option.innerHTML =
           $(this).attr("user_name") + "  " + $(this).attr("times");
         selectRoute.appendChild(option);
 
-        sessionIDArray.push($(this).attr("session_id"));
+        UsernameArray.push($(this).attr("user_name"));
       });
 
       // need to reset this for firefox
@@ -373,7 +373,7 @@ jQuery(document).ready(function($) {
         viewingAllRoutes = false;
 
         var indexOfRouteInRouteSelectDropdwon =
-          sessionIDArray.indexOf(session_id) + 1;
+          UsernameArray.indexOf(userName) + 1;
         selectRoute.selectedIndex = indexOfRouteInRouteSelectDropdwon;
         showPermanentMessage("Please select a route below");
 
@@ -385,7 +385,7 @@ jQuery(document).ready(function($) {
           map_js_vars.ajax_url,
           {
             action: "get_geojson_route",
-            session_id: session_id,
+            userName: userName,
             get_geojson_route_nonce: map_js_vars.get_geojson_route_nonce
           },
           function(response) {
