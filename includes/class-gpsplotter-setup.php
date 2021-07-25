@@ -47,7 +47,7 @@ class Gps_Plotter_Setup
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' ); 
         $table_name = $wpdb->prefix . 'gps_locations';
         
-        $sql = "IF NOT EXISTS{$table_name} (
+        $sql = "
           CREATE TABLE {$table_name} (
           gps_location_id int(10) unsigned NOT NULL AUTO_INCREMENT,
           last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -67,7 +67,7 @@ class Gps_Plotter_Setup
           UNIQUE KEY (gps_location_id),
           KEY session_id_index (session_id),
           KEY user_name_index (user_name)
-        ) $charset_collate; )";
+        ) $charset_collate;";
 
         dbDelta($sql);
         
