@@ -102,6 +102,9 @@ class Gps_Plotter_Endpoint {
                 global $wpdb;
                 $table_name = $wpdb->prefix . 'gps_locations';
 
+                // Lyd edit
+                $session_id = 12;
+
                 $wpdb->insert( 
             	$table_name, 
             	array( 
