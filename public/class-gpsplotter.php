@@ -232,6 +232,7 @@ class Gps_Plotter {
             'get_routes_nonce'              => wp_create_nonce('get-routes-nonce'),
             'get_geojson_route_nonce'       => wp_create_nonce('get-geojson-route-nonce'),
             'get_all_geojson_routes_nonce'  => wp_create_nonce('get-all-geojson-routes-nonce'),
+            'get_last_position_nonce'       => wp_create_nonce('get-last-position-nonce'),
             'delete_route_nonce'            => wp_create_nonce('delete-route-nonce')
         	)
 		);
@@ -242,6 +243,7 @@ class Gps_Plotter {
 				'get_routes_nonce'              => wp_create_nonce('get-routes-nonce'),
 				'get_geojson_route_nonce'       => wp_create_nonce('get-geojson-route-nonce'),
 				'get_all_geojson_routes_nonce'  => wp_create_nonce('get-all-geojson-routes-nonce'),
+				'get_last_position_nonce'       => wp_create_nonce('get-last-position-nonce'),
 				'delete_route_nonce'            => wp_create_nonce('delete-route-nonce')
 				)
 			);

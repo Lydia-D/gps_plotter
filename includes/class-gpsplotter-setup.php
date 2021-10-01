@@ -22,16 +22,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class Gps_Plotter_Setup
 {
-	/**
-	 * Fired when the plugin is activated. Create table for Gps Plotter and two stored procedures.
+    /**
+     * Fired when the plugin is activated. Create table for Gps Plotter and two stored procedures.
      * One to get all the routes for display in the drop down box and the other to get a single
      * route in geojson format to create the map and populate the markers.
-	 *
-	 * @since 1.0.0
+     *
+     * @since 1.0.0
      * @global $wpdb
      * @global $charset_collate
      * @return void
-	 */
+     */
     public static function activate()
     {
         // clear the permalinks©
@@ -144,6 +144,25 @@ class Gps_Plotter_Setup
         JOIN {$table_name} ON {$table_name}.gps_location_id = MaxID.ID
         ORDER BY gps_time;
         END;";
+        
+        $wpdb->query( $sql );
+        
+        $procedure_name =  $wpdb->prefix . "get_last_position";
+        $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
+      
+        $sql = "CREATE PROCEDURE {$procedure_name}()
+        BEGIN
+        SET @counter := 0;
+        SELECT
+        gps_time,
+        gps_location_id,
+        CONCAT('{\"type\": \"Feature\", \"id\": \"', CAST(session_id AS CHAR), '\", \"properties\": {\"speed\": ', CAST(speed AS CHAR), ', \"direction\": ', CAST(direction AS CHAR), ', \"distance\": ', CAST(distance AS CHAR), ', \"location_method\": \"', CAST(location_method AS CHAR), '\", \"gps_time\": \"', DATE_FORMAT(gps_time, '%b %e %Y %h:%i%p'), '\", \"user_name\": \"', CAST(user_name AS CHAR), '\", \"phone_number\": \"', CAST(phone_number AS CHAR), '\", \"accuracy\": ', CAST(accuracy AS CHAR), ', \"geojson_counter\": ', @counter := @counter + 1, ', \"extra_info\": \"', CAST(extra_info AS CHAR), '\"}, \"geometry\": {\"type\": \"Point\", \"coordinates\": [', CAST(longitude AS CHAR), ', ', CAST(latitude AS CHAR), ']}}') geojson 
+        FROM {$table_name}
+        WHERE gps_time =(
+        SELECT
+        MAX(gps_time)
+        FROM {$table_name})
+        END;";
 
         $wpdb->query( $sql );
         
@@ -176,12 +195,12 @@ class Gps_Plotter_Setup
         dbDelta( $sql ); 
     }
 
-	/**
-	 * Fired when the plugin is deactivated.
-	 *
-	 * @since 1.0.0
-	 *
-	 */
+    /**
+     * Fired when the plugin is deactivated.
+     *
+     * @since 1.0.0
+     *
+     */
     public static function deactivate()
     {
         if ( ! current_user_can( 'activate_plugins' ) )
@@ -204,6 +223,9 @@ class Gps_Plotter_Setup
         $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
         
         $procedure_name =  $wpdb->prefix . "get_all_geojson_routes";
+        $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
+    
+        $procedure_name =  $wpdb->prefix . "get_last_position";
         $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
         
         $procedure_name =  $wpdb->prefix . "delete_route";

@@ -10,12 +10,14 @@ jQuery(document).ready(function($) {
 
   var map_type = "ROADMAP";
 
-  /* demo response 
-	var bws_demo = {"type": "FeatureCollection", "features": [{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:43AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 1, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2145580, 47.6366310]}},{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:44AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 2, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2017690, 47.6379610]}},{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:45AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 3, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2095790, 47.6429350]}}]};
-	*/
+  /* demo response
+  var bws_demo = {"type": "FeatureCollection", "features": [{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:43AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 1, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2145580, 47.6366310]}},{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:44AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 2, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2017690, 47.6379610]}},{"type": "Feature", "id": "8BA21D90-3F90-407F-BAAE-800B04B1F5ED", "properties": {"speed": 0, "direction": 0, "distance": 0.0, "location_method": "na", "gps_time": "Jan 3 2007 11:45AM", "user_name": "wordpressUser1", "phone_number": "1BA21D90-3F90-407F-BAAE-800B04B1F5ED", "accuracy": 137, "geojson_counter": 3, "extra_info": "na"}, "geometry": {"type": "Point", "coordinates": [-122.2095790, 47.6429350]}}]};
+  */
 
-  getAllRoutesForMap();
-  loadRoutesIntoDropdownBox();
+  //getAllRoutesForMap(); // assume the first marker on load is created here via call to loadGPSLocations
+  getLastPosition();
+  loadRoutesIntoDropdownBox(); //
+  // load last position onto map
 
   $("#viewall").click(function() {
     getAllRoutesForMap();
@@ -77,6 +79,28 @@ jQuery(document).ready(function($) {
     //$('body').css('background-color', '#ccc');
     // $('head').append('<link rel="stylesheet" href="style2.css" type="text/css" />');
   }
+
+  function getLastPosition() {
+    // when the page first loads create map and display last known position
+
+    viewingAllRoutes = false;
+    //selectRoute.selectedIndex = 0;
+    showPermanentMessage("Please select a route below");
+
+    $.post(
+      map_js_vars.ajax_url,
+      {
+        action: "get_last_position",
+        get_last_position_nonce: map_js_vars.get_last_position_nonce
+      },
+      function(response) {
+        /* Runing on demo data bws_demo*/
+        /* Lyd edit: turn off LoadGPSLocations to checkif it doesnt load the map until a route is selected*/
+		//console.log(objectToString(response))
+        loadGPSLocations(response);
+      }
+    );
+    }
 
   function getAllRoutesForMap() {
     // when the page first loads, get the routes from the DB and load them into the dropdown box.
@@ -164,7 +188,7 @@ jQuery(document).ready(function($) {
   }
 
   function loadGPSLocations(geojson) {
-    // console.log(JSON.stringify(geojson));
+    console.log(JSON.stringify(geojson));
 
     if (geojson.length == 0 || geojson == "0") {
       showMessage("There is no tracking data to view");

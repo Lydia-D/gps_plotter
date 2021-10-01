@@ -37,6 +37,9 @@ $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
 $procedure_name =  $wpdb->prefix . "get_all_geojson_routes";
 $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
 
+$procedure_name =  $wpdb->prefix . "get_last_position";
+$wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
+
 $procedure_name =  $wpdb->prefix . "delete_route";
 $wpdb->query("DROP PROCEDURE IF EXISTS {$procedure_name};");
 

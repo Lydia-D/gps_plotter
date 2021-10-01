@@ -32,6 +32,8 @@ class Gps_Plotter_Ajax {
         add_action( 'wp_ajax_nopriv_get_routes',             array( $this, 'get_gps_routes' ) ); 
         add_action( 'wp_ajax_get_all_geojson_routes',        array( $this, 'get_all_geojson_routes' ) );
         add_action( 'wp_ajax_nopriv_get_all_geojson_routes', array( $this, 'get_all_geojson_routes' ) );
+        add_action( 'wp_ajax_get_last_position',             array( $this, 'get_last_position' ) );
+        add_action( 'wp_ajax_nopriv_get_last_position',      array( $this, 'get_last_position' ) );
         add_action( 'wp_ajax_get_geojson_route',             array( $this, 'get_geojson_route' ) );
         add_action( 'wp_ajax_nopriv_get_geojson_route',      array( $this, 'get_geojson_route' ) );
         add_action( 'wp_ajax_delete_route',                  array( $this, 'delete_gps_route' ) );
@@ -121,6 +123,38 @@ class Gps_Plotter_Ajax {
             exit;
         }            
     }
+
+    public function get_last_position() {
+        if ( ! wp_verify_nonce( $_POST['get_last_position_nonce'], 'get-last-position-nonce' ) ) {
+            exit;
+        } else {
+            header( 'Content-Type: application/json' );
+			
+            global $wpdb;
+			
+            $procedure_name =  $wpdb->prefix . 'get_last_position';
+            $gps_locations = $wpdb->get_results("CALL {$procedure_name};");
+
+            if ( 0 == $wpdb->num_rows ) {
+                echo '0';
+                exit;
+            }
+			
+            $json = '{"type": "FeatureCollection", "features": [';
+           
+            foreach ( $gps_locations as $location ) {
+                $json .= $location->geojson;
+                $json .= ','; 
+            }
+        
+            $json = rtrim($json, ',');
+            $json .= ']}';   
+                      
+            echo $json;
+            exit;
+        }            
+    }
+
 
 	/**
 	 * Get all routes in geojson format when page loads or when called from view all button
