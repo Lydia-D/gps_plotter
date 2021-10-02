@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
   var selectRoute = document.getElementById("selectRoute");
   var map = document.getElementById("map-canvas");
   var intervalID = 0;
-  var zoom = 12;
+  var zoom = 10;
   var autoRefresh = false;
   var UsernameArray = [];
   var viewingAllRoutes = false;
@@ -96,7 +96,6 @@ jQuery(document).ready(function($) {
       function(response) {
         /* Runing on demo data bws_demo*/
         /* Lyd edit: turn off LoadGPSLocations to checkif it doesnt load the map until a route is selected*/
-		//console.log(objectToString(response))
         loadGPSLocations(response);
       }
     );
@@ -188,7 +187,7 @@ jQuery(document).ready(function($) {
   }
 
   function loadGPSLocations(geojson) {
-    console.log(JSON.stringify(geojson));
+    //console.log(JSON.stringify(geojson));
 
     if (geojson.length == 0 || geojson == "0") {
       showMessage("There is no tracking data to view");
@@ -277,9 +276,12 @@ jQuery(document).ready(function($) {
 
       var track = L.polyline(locationArray, {color: "red"}).addTo(gpsPlotterMap);
       // fit markers within window
-      var bounds = new L.LatLngBounds(locationArray);
-      gpsPlotterMap.fitBounds(bounds);
-
+      if ($(geojson.features).length == 1) {
+        gpsPlotterMap.setView(tempLocation, zoom);
+      } else {
+        var bounds = new L.LatLngBounds(locationArray);
+        gpsPlotterMap.fitBounds(bounds);
+      }
       // restarting interval here in case we are coming from viewing all routes
       if (autoRefresh) {
         restartInterval();
