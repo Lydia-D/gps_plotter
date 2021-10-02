@@ -153,14 +153,14 @@ class Gps_Plotter_Setup
         $sql = "CREATE PROCEDURE {$procedure_name}()
         BEGIN
         SET @counter := 0;
-        SET @last_time = (SELECT MAX(gps_time) FROM {$table_name} tmp
+        SET @last_time = (SELECT MAX(last_update) FROM {$table_name} tmp
         WHERE 1);
         SELECT
-        gps_time,
+        last_update,
         gps_location_id,
         CONCAT('{\"type\": \"Feature\", \"id\": \"', CAST(session_id AS CHAR), '\", \"properties\": {\"speed\": ', CAST(speed AS CHAR), ', \"direction\": ', CAST(direction AS CHAR), ', \"distance\": ', CAST(distance AS CHAR), ', \"location_method\": \"', CAST(location_method AS CHAR), '\", \"gps_time\": \"', DATE_FORMAT(gps_time, '%b %e %Y %h:%i%p'), '\", \"user_name\": \"', CAST(user_name AS CHAR), '\", \"phone_number\": \"', CAST(phone_number AS CHAR), '\", \"accuracy\": ', CAST(accuracy AS CHAR), ', \"geojson_counter\": ', @counter := @counter + 1, ', \"extra_info\": \"', CAST(extra_info AS CHAR), '\"}, \"geometry\": {\"type\": \"Point\", \"coordinates\": [', CAST(longitude AS CHAR), ', ', CAST(latitude AS CHAR), ']}}') geojson 
         FROM {$table_name}
-        WHERE gps_time = @last_time;
+        WHERE last_update = @last_time;
         END;";
 
         $wpdb->query( $sql );
